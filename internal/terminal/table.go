@@ -1,6 +1,8 @@
 package terminal
 
 import (
+	"fmt"
+	"io"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/table"
@@ -57,4 +59,18 @@ func WrapText(text string, lineWidth int) string {
 		currentLineLength += len(word) + 1
 	}
 	return strings.TrimSpace(wrapped.String())
+}
+
+// ShowPlainTable renders a plain text formatted table to writer.
+func ShowPlainTable(writer io.Writer, columns []table.Column, rows []table.Row) {
+	for _, col := range columns {
+		_, _ = fmt.Fprintf(writer, "%-*s", col.Width, col.Title)
+	}
+	_, _ = fmt.Fprintln(writer)
+	for _, row := range rows {
+		for i, cell := range row {
+			_, _ = fmt.Fprintf(writer, "%-*s", columns[i].Width, cell)
+		}
+		_, _ = fmt.Fprintln(writer)
+	}
 }
