@@ -89,7 +89,7 @@ func TestGetControlListColumnsAndRows(t *testing.T) {
 				{
 					ID:                  "test-control-id",
 					Title:               "Test Control Title",
-					ImplemenationStatus: "implemented",
+					ImplementationStatus: "implemented",
 					Rules: []Rule{
 						{ID: "rule-1", Plugin: "plugin-1"},
 						{ID: "rule-2", Plugin: "plugin-1"},

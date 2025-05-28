@@ -73,11 +73,11 @@ type Rule struct {
 // Control repsents details about a control across
 // component sources.
 type Control struct {
-	ID                  string
-	Title               string
-	Description         string
-	ImplemenationStatus string
-	Rules               []Rule
+	ID                   string
+	Title                string
+	Description          string
+	ImplementationStatus string
+	Rules                []Rule
 }
 
 type infoOptions struct {
@@ -108,7 +108,7 @@ func infoCmd(common *option.Common) *cobra.Command {
 	}
 	cmd.Flags().StringVarP(&infoOpts.controlID, "control", "c", "", "show info for a specific control ID")
 	cmd.Flags().StringVarP(&infoOpts.ruleID, "rule", "r", "", "show info for a specific rule ID")
-	cmd.Flags().IntVarP(&infoOpts.limit, "limit", "l", 0, fmt.Sprintf("limit the number of table rows"))
+	cmd.Flags().IntVarP(&infoOpts.limit, "limit", "l", 0, "limit the number of table rows")
 	cmd.Flags().BoolVarP(&infoOpts.plain, "plain", "p", false, "print the table with minimal formatting")
 	infoOpts.complyTimeOpts.BindFlags(cmd.Flags())
 	return cmd
@@ -147,7 +147,6 @@ func runInfo(opts *infoOptions) error {
 	} else {
 		return displayAllControls(opts, controlMap)
 	}
-
 }
 
 // processControlImplementations extracts control details and set parameters from component definitions.
@@ -195,7 +194,7 @@ func processControlImplementations(compDefs []oscalTypes.DefinedComponent, appDi
 								rule.Plugin = pluginForComponent
 								controlDetails.Rules = append(controlDetails.Rules, rule)
 							case "implementation-status":
-								controlDetails.ImplemenationStatus = p.Value
+								controlDetails.ImplementationStatus = p.Value
 							}
 						}
 					}
@@ -430,7 +429,7 @@ func getControlListColumnsAndRows(controls []Control) ([]table.Column, []table.R
 		row := table.Row{
 			control.ID,
 			control.Title,
-			control.ImplemenationStatus,
+			control.ImplementationStatus,
 			strings.Join(removeDuplicates(plugins), ", "),
 		}
 		rows = append(rows, row)
@@ -466,7 +465,7 @@ func newControlInfoModel(control Control, rowLimit int) terminal.Model {
 	headerFields := strings.Join([]string{
 		renderKeyValuePair("Control ID", control.ID),
 		renderKeyValuePair("Title", control.Title),
-		renderKeyValuePair("Status", control.ImplemenationStatus),
+		renderKeyValuePair("Status", control.ImplementationStatus),
 		keyStyle.Render("Description") + ":\n" + valueStyle.Render(wrappedDescription),
 	}, "\n")
 
@@ -554,7 +553,7 @@ func newControlListModel(controls []Control, rowLimit int) terminal.Model {
 
 	return terminal.Model{
 		Table:   tbl,
-		HelpMsg: fmt.Sprintf("Showing %d of %d available contorls . Use --limit to limit table rows.", tableHeight-1, len(rows)),
+		HelpMsg: fmt.Sprintf("Showing %d of %d available controls . Use --limit to limit table rows.", tableHeight-1, len(rows)),
 	}
 }
 
@@ -570,7 +569,7 @@ func displayControlInfo(opts *infoOptions, controlMap map[string]Control) error 
 
 		_, _ = fmt.Fprintf(opts.Out, "Control ID: %s \n", control.ID)
 		_, _ = fmt.Fprintf(opts.Out, "Title: %s \n", control.Title)
-		_, _ = fmt.Fprintf(opts.Out, "Status: %s \n", control.ImplemenationStatus)
+		_, _ = fmt.Fprintf(opts.Out, "Status: %s \n", control.ImplementationStatus)
 		_, _ = fmt.Fprintf(opts.Out, "Description: %s \n", control.Description)
 		_, _ = fmt.Fprintln(opts.Out)
 		terminal.ShowPlainTable(opts.Out, cols, rows)
